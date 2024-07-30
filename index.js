@@ -1,11 +1,12 @@
-const { BigQuery } = require('@google-cloud/bigquery');
 const express = require('express');
+const path = require('path');
+const { BigQuery } = require('@google-cloud/bigquery');
 const cors = require('cors');
 const cron = require('node-cron');
 require('dotenv').config();
 
 const app = express();
-const port = process.env.PORT || 3000; // Utiliza el puerto proporcionado por Heroku
+const port = process.env.PORT || 3000;
 
 // Configuración de CORS para permitir solicitudes desde el frontend
 app.use(cors());
@@ -13,7 +14,7 @@ app.use(cors());
 // Configuración del cliente de BigQuery
 const bigQueryClient = new BigQuery({
   projectId: 'sigma-410715',
-  keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS, // Asegúrate de que esta variable esté configurada
+  keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
   location: 'US'
 });
 
@@ -97,6 +98,14 @@ app.get('/api/stock', async (req, res) => {
     console.error('Error al obtener los datos:', error.message);
     res.status(500).json({ error: 'Error al obtener los datos: ' + error.message });
   }
+});
+
+// Servir archivos estáticos desde la carpeta build (para front-end)
+app.use(express.static(path.join(__dirname, 'build')));
+
+// Ruta para manejar cualquier ruta no definida y servir el front-end
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 app.listen(port, () => {
