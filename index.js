@@ -5,7 +5,7 @@ const cron = require('node-cron');
 require('dotenv').config();
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000; // Utiliza el puerto proporcionado por Heroku
 
 // Configuración de CORS para permitir solicitudes desde el frontend
 app.use(cors());
@@ -13,7 +13,7 @@ app.use(cors());
 // Configuración del cliente de BigQuery
 const bigQueryClient = new BigQuery({
   projectId: 'sigma-410715',
-  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+  keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS, // Asegúrate de que esta variable esté configurada
   location: 'US'
 });
 
