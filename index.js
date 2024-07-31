@@ -11,12 +11,9 @@ const port = process.env.PORT || 3000;
 // Configuración de CORS para permitir solicitudes desde el frontend
 app.use(cors());
 
-// Ruta al archivo de credenciales
-const keyFilePath = path.join(__dirname, 'config', 'google-credentials.json');
-
-// Configuración del cliente de BigQuery
+// Configuración del cliente de BigQuery usando variable de entorno
 const bigQueryClient = new BigQuery({
-  keyFilename: keyFilePath,
+  credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS),
   projectId: 'sigma-410715',
   location: 'US'
 });
