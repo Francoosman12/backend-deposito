@@ -11,18 +11,21 @@ const port = process.env.PORT || 3000;
 // Configuración de CORS para permitir solicitudes desde el frontend
 app.use(cors());
 
+// Ruta al archivo de credenciales
+const keyFilePath = path.join(__dirname, 'config', 'google-credentials.json');
+
 // Configuración del cliente de BigQuery
 const bigQueryClient = new BigQuery({
-    projectId: 'sigma-410715',
-    credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS),
-    location: 'US'
-  });
+  keyFilename: keyFilePath,
+  projectId: 'sigma-410715',
+  location: 'US'
+});
 
 // Variable para almacenar datos en memoria
 let stockData = [];
 
 // Función para obtener datos específicos de BigQuery
-async function obtenerDatosDeStock(limit, offset, query) {
+async function obtenerDatosDeStock(query) {
   const queryString = `
     SELECT 
       ARTICULO_CODIGO, 
@@ -34,20 +37,19 @@ async function obtenerDatosDeStock(limit, offset, query) {
       ARTICULO_STOCK
     FROM \`sigma-410715.sigmarepo.bq_stocks\`
     WHERE ARTICULO_CODIGO LIKE @query OR ARTICULO_NOMBRE LIKE @query OR ARTICULO_EANUNI LIKE @query
-    LIMIT @limit OFFSET @offset
   `;
   const options = {
     query: queryString,
     params: {
-      query: `%${query}%`,
-      limit: limit,
-      offset: offset
+      query: `%${query}%`
     },
     location: 'US'
   };
 
   try {
+    console.log('Consultando BigQuery con opciones:', options); // Log para depuración
     const [rows] = await bigQueryClient.query(options);
+    console.log('Datos obtenidos de BigQuery:', rows); // Log para depuración
     return rows;
   } catch (error) {
     console.error('Error en la consulta a BigQuery:', error.message);
@@ -58,9 +60,7 @@ async function obtenerDatosDeStock(limit, offset, query) {
 // Función para actualizar los datos de la base de datos
 async function actualizarDatos() {
   try {
-    const limit = 1000; 
-    const offset = 0;
-    stockData = await obtenerDatosDeStock(limit, offset, '');
+    stockData = await obtenerDatosDeStock('');
     console.log('Datos actualizados:', stockData.length, 'registros obtenidos');
   } catch (error) {
     console.error('Error al actualizar datos de BigQuery:', error.message);
@@ -78,22 +78,19 @@ actualizarDatos();
 
 // Endpoint para obtener datos específicos de stock
 app.get('/api/stock', async (req, res) => {
-  const limit = parseInt(req.query.limit) || 10;
-  const offset = parseInt(req.query.offset) || 0;
   const query = req.query.query || '';
 
   try {
-    const data = await obtenerDatosDeStock(limit, offset, query);
+    const data = await obtenerDatosDeStock(query);
 
-    // Filtrar resultados únicos por ARTICULO_CODIGO
-    const uniqueData = Array.from(new Set(data.map(item => item.ARTICULO_CODIGO.trim())))
-                            .map(codigo => data.find(item => item.ARTICULO_CODIGO.trim() === codigo));
+    // Mostrar datos para depuración
+    console.log('Datos recibidos para enviar:', data);
 
-    if (uniqueData.length === 0) {
+    if (data.length === 0) {
       return res.status(404).json({ error: 'No se encontraron productos' });
     }
 
-    res.json(uniqueData);
+    res.json(data);
   } catch (error) {
     console.error('Error al obtener los datos:', error.message);
     res.status(500).json({ error: 'Error al obtener los datos: ' + error.message });
