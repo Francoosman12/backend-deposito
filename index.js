@@ -13,10 +13,10 @@ app.use(cors());
 
 // Configuración del cliente de BigQuery
 const bigQueryClient = new BigQuery({
-  projectId: 'sigma-410715',
-  keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-  location: 'US'
-});
+    projectId: 'sigma-410715',
+    credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS),
+    location: 'US'
+  });
 
 // Variable para almacenar datos en memoria
 let stockData = [];
