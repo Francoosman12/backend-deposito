@@ -97,8 +97,6 @@ app.get('/api/stock', async (req, res) => {
   }
 });
 
-// Servir archivos estáticos desde la carpeta build (para front-end)
-app.use(express.static(path.join(__dirname, 'build')));
 
 // Ruta para manejar cualquier ruta no definida y servir el front-end
 app.get('*', (req, res) => {
