@@ -11,7 +11,7 @@ const bigQueryClient = new BigQuery({
     client_email: process.env.CLIENT_EMAIL,
     private_key: formattedPrivateKey,
   },
-  location: 'US',
+  location: 'US', // Asegúrate de que esto coincida con la ubicación de tu dataset
 });
 
 async function obtenerDatosDeStock(query) {
@@ -32,7 +32,7 @@ async function obtenerDatosDeStock(query) {
     params: {
       query: `%${query}%`
     },
-    location: 'US'
+    location: 'US' // Asegúrate de que esto coincida con la ubicación de tu dataset
   };
 
   try {
