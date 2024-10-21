@@ -8,7 +8,7 @@ const stockRoutes = require('./routes/stock');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Configuración de CORS para permitir solicitudes desde el frontend
+// configuración de CORS para permitir solicitudes desde el frontend
 app.use(cors());
 
 // Rutas de la API
