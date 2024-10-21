@@ -8,15 +8,8 @@ const stockRoutes = require('./routes/stock');
 const app = express();
 const port = process.env.PORT || 3000;
 
-const allowedOrigins = ['http://localhost:3001', 'https://backend-deposito-1egxmzzug-francoosman12s-projects.vercel.app'];
-
-
 // Configuración de CORS para permitir solicitudes desde el frontend
-app.use(cors({
-    origin: allowedOrigins,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-  }));
+app.use(cors());
   
 // Rutas de la API
 app.use('/api', stockRoutes);
