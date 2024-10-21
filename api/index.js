@@ -9,8 +9,12 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Configuración de CORS para permitir solicitudes desde el frontend
-app.use(cors());
-
+app.use(cors({
+    origin: 'http://localhost:3001', // Permitir solo desde este origen
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
+    allowedHeaders: ['Content-Type', 'Authorization'] // Encabezados permitidos
+  }));
+  
 // Rutas de la API
 app.use('/api', stockRoutes);
 
