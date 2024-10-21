@@ -16,7 +16,7 @@ const bigQueryClient = new BigQuery({
     location: 'US'
   });
   
-  console.log('Clave privada después de reemplazar saltos de línea:', process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'));
+  console.log('clave privada después de reemplazar saltos de línea:', process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'));
 
 // Función para obtener datos específicos de BigQuery
 async function obtenerDatosDeStock(limit, offset, query) {
